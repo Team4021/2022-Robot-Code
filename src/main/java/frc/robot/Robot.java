@@ -2,11 +2,14 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+//starter imports
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+//our imports
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive; //change to whatever our drive is
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -26,16 +29,20 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  //motors
+    //STILL NEED SHOOTER MOTORS and control group if necessary.
   WPI_TalonFX leftFront = new WPI_TalonFX(0);
   WPI_TalonFX leftBack = new WPI_TalonFX(1);
   WPI_TalonFX rightFront = new WPI_TalonFX(2);
   WPI_TalonFX rightBack = new WPI_TalonFX(3);
-
+  //motor control groups
   MotorControllerGroup left = new MotorControllerGroup(leftFront, leftBack);
   MotorControllerGroup right = new MotorControllerGroup(rightFront, rightBack);
-
+ 
+  //differential drive. What does this do again?
   DifferentialDrive moveItMoveIt = new DifferentialDrive(left, right);
-
+  
+  //joystick - I petition we name this something more identifiable just in case something breaks
   Joystick mort = new Joystick(0);
 
 
@@ -96,6 +103,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {}
 
   /** This function is called periodically during operator control. */
+    //joystick imput = motion using arcade drive
   @Override
   public void teleopPeriodic() {
     double x = mort.getRawAxis(0); //figure out the right axis
@@ -119,4 +127,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
+  public void kowalski() {
+    
+  }
 }
