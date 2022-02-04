@@ -110,7 +110,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightArea", area);
 
     SmartDashboard.putBoolean("alignedFirst", alignedFirst);
-    SmartDashboard.putBoolean("alginedFinal", alignedFinal);
+    SmartDashboard.putBoolean("alignedFinal", alignedFinal);
     SmartDashboard.putBoolean("distanced", distanced);
   }
 
@@ -194,44 +194,44 @@ public class Robot extends TimedRobot {
       right.set(martyAlign);
       left.set(0);
       alignedFirst = false;
-    } else if (lmlx > 15) {
+    } else if (lmlx > 10) {
+      right.set(0);
+      left.set(martyAlign);
+      alignedFirst = false;
+    } else if (lmlx < -10) {
       right.set(-martyAlign);
       left.set(0);
-      alignedFirst = false;
-    } else if (lmlx < -15) {
-      right.set(0);
-      left.set(-martyAlign);
-      alignedFirst = false;
-    } else if (lmlx < 15 && lmlx > -10 && tv == 1) {
-      alignedFirst = true;
+     alignedFirst = false;
+   } else if (lmlx < 1 && lmlx > -10 && tv == 1) {
+     alignedFirst = true;
     }
 
 
     // after rotated into place, move closer
-    if (alignedFirst = true && tv == 1) {
-      if (lmly > 5) {
-        right.set(melmanAlign);
-        left.set(melmanAlign);
-        distanced = false;
-      } else if (lmly < 3) {
+    if (alignedFirst == true && tv == 1) {
+      if (lmly > 1) {
         right.set(-melmanAlign);
         left.set(-melmanAlign);
         distanced = false;
-      } else if (lmly < 5 && lmly > 3 && tv == 1) {
+      } else if (lmly < 0) {
+        right.set(melmanAlign);
+        left.set(melmanAlign);
+        distanced = false;
+      } else if (lmly < 1 && lmly > 0 && tv == 1) {
         distanced = true;
       }
     }
 
 
     // after moving closer, rotate into a better position
-    if (distanced = true && tv == 1) {
+    if (distanced == true && tv == 1) {
       if (lmlx > 1) {
-        right.set(0);
-        left.set(martyAlign);
+        right.set(-melmanAlign);
+        left.set(melmanAlign);
         alignedFinal = false;
       } else if (lmlx < -1) {
-        right.set(martyAlign);
-        left.set(0);
+        right.set(melmanAlign);
+        left.set(-melmanAlign);
         alignedFinal = false;
       } else if (lmlx < 1 && lmlx > -1 && tv == 1) {
         alignedFinal = true;
