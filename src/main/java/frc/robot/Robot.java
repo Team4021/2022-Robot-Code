@@ -110,7 +110,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("LimelightArea", area);
 
     SmartDashboard.putBoolean("alignedFirst", alignedFirst);
-    SmartDashboard.putBoolean("alginedFinal", alignedFinal);
+    SmartDashboard.putBoolean("alignedFinal", alignedFinal);
     SmartDashboard.putBoolean("distanced", distanced);
   }
 
@@ -159,8 +159,9 @@ public class Robot extends TimedRobot {
     moveItMoveIt.arcadeDrive(x, -y);
 
     if (mort.getRawButton(1)) {
-      kowalski();
+      KowalskiNew();
     }
+    
   }
 
   /** This function is called once when the robot is disabled. */
@@ -179,7 +180,7 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {}
 //Kowalski = aimbot
-  public void kowalski() {
+  /*public void kowalski() {
     final double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
     alignedFirst = false;
     alignedFinal = false;
@@ -208,7 +209,7 @@ public class Robot extends TimedRobot {
 
 
     // after rotated into place, move closer
-    if (alignedFirst = true && tv == 1) {
+    if (alignedFirst == true && tv == 1) {
       if (lmly > 5) {
         right.set(melmanAlign);
         left.set(melmanAlign);
@@ -238,7 +239,7 @@ public class Robot extends TimedRobot {
       }
     }
 
-  }
+  }*/
 
   /**********************************************************/
   public double martyX() {
@@ -262,6 +263,37 @@ public class Robot extends TimedRobot {
       melmanAlign = melmanSpeed*melmanError;
     }
     return melmanAlign;
+  }
+
+  public void KowalskiNew() {
+    alignedFinal = false;
+    distanced = false;
+
+    if (lmlx < -1) {
+      right.set(.3);
+      left.set(.3);
+      alignedFinal = false;
+    } else if (lmlx > 1) {
+      right.set(-.3);
+      right.set(-.3);
+      alignedFinal = false;
+    }
+
+    if (alignedFinal == true) {
+      if (lmly < 3) {
+        right.set(.3);
+        left.set(-.3);
+        distanced = false;
+      } else if ( lmly > 5) {
+        right.set(-.3);
+        left.set(.3);
+        distanced = false;
+      } else if (lmly > 3 && lmly < 5) {
+        distanced = true;
+      }
+    }
+
+
   }
 
 }
