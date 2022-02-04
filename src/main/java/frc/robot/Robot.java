@@ -62,11 +62,13 @@ public class Robot extends TimedRobot {
   double martySpeed = 0;
   double martyAlign;
   double martyError = 0;
-  double lmlx;
-  double lmly;
   double melmanSpeed = 0;
   double melmanAlign;
   double melmanError;
+  double lmlx = tx.getDouble(0.0);
+  double lmly = ty.getDouble(0.0);
+  double area = ta.getDouble(0.0);
+
 
   boolean alignedFirst;
   boolean alignedFinal;
@@ -268,6 +270,8 @@ public class Robot extends TimedRobot {
   public void KowalskiNew() {
     alignedFinal = false;
     distanced = false;
+    double lmlx = tx.getDouble(0.0);
+    double lmly = ty.getDouble(0.0);
 
     if (lmlx < -1) {
       right.set(.3);
@@ -277,6 +281,8 @@ public class Robot extends TimedRobot {
       right.set(-.3);
       right.set(-.3);
       alignedFinal = false;
+    } else if (lmlx > -1 && lmlx < 1) {
+      alignedFinal = true;
     }
 
     if (alignedFinal == true) {
