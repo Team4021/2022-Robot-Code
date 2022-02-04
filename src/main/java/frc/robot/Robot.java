@@ -186,51 +186,53 @@ public class Robot extends TimedRobot {
     distanced = false;
     martyX();
     melmanY();
-    //right now the auto code just makes the robot turn in place, look through my code and find out what I did wrong. you can compare what I did to the 2021 Varsity code on github. If you can't figure out what's wrong, try to find something else on the robot to program or go update any more software/hardware that you need to.
-    //look into making a boolean for if the camera sees something.
-
+    double lmlx = tx.getDouble(0.0);
+    double lmly = ty.getDouble(0.0);
+  
+    
+    
     // find the first bounds to rotate into place
     if (tv == 0) {
-      right.set(martyAlign);
-      left.set(0);
+      right.set(.3);
+      left.set(.3);
       alignedFirst = false;
     } else if (lmlx > 10) {
-      right.set(0);
+      right.set(martyAlign);
       left.set(martyAlign);
       alignedFirst = false;
     } else if (lmlx < -10) {
       right.set(-martyAlign);
-      left.set(0);
-     alignedFirst = false;
-   } else if (lmlx < 1 && lmlx > -10 && tv == 1) {
+      left.set(-martyAlign);
+      alignedFirst = false;
+   } else if (lmlx < 10 && lmlx > -10 && tv == 1) {
      alignedFirst = true;
     }
 
 
     // after rotated into place, move closer
     if (alignedFirst == true && tv == 1) {
-      if (lmly > 1) {
-        right.set(-melmanAlign);
+      if (lmly > 5) {
+        right.set(melmanAlign);
         left.set(-melmanAlign);
         distanced = false;
-      } else if (lmly < 0) {
-        right.set(melmanAlign);
+      } else if (lmly < 3) {
+        right.set(-melmanAlign);
         left.set(melmanAlign);
         distanced = false;
-      } else if (lmly < 1 && lmly > 0 && tv == 1) {
+      } else if (lmly < 5 && lmly > 3 && tv == 1) {
         distanced = true;
       }
     }
 
 
     // after moving closer, rotate into a better position
-    if (distanced == true && tv == 1) {
+    if (distanced == true) {
       if (lmlx > 1) {
-        right.set(-melmanAlign);
+        right.set(melmanAlign);
         left.set(melmanAlign);
         alignedFinal = false;
       } else if (lmlx < -1) {
-        right.set(melmanAlign);
+        right.set(-melmanAlign);
         left.set(-melmanAlign);
         alignedFinal = false;
       } else if (lmlx < 1 && lmlx > -1 && tv == 1) {
@@ -254,7 +256,7 @@ public class Robot extends TimedRobot {
 
   /**********************************************************/
   public double melmanY() {
-    melmanSpeed = .0218;
+    melmanSpeed = .03;
     melmanError = setpointY - lmly;
     if (Math.abs(melmanSpeed*melmanError) < .15) {
       melmanAlign = .15;
