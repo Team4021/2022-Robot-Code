@@ -6,6 +6,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -15,9 +16,8 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive; //change to whatever our d
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
-import org.ejml.dense.row.decompose.lu.LUDecompositionAlt_CDRM;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
@@ -43,12 +43,23 @@ public class Robot extends TimedRobot {
   NetworkTableEntry tv = table.getEntry("tv"); // 1 if have vision 0 if no vision
 
   //motors
-    //STILL NEED SHOOTER MOTORS and control group if necessary.
+    //drive motors
   WPI_TalonFX leftFront = new WPI_TalonFX(3);
   WPI_TalonFX leftBack = new WPI_TalonFX(1);
-  WPI_TalonFX rightFront = new WPI_TalonFX(6);
+  WPI_TalonFX rightFront = new WPI_TalonFX(6); //set to the right values
   WPI_TalonFX rightBack = new WPI_TalonFX(5);
-  //motor control groups
+    //shooter motor
+  WPI_TalonFX shooter = new WPI_TalonFX(8);
+    //climber motors
+  WPI_TalonFX masonUp = new WPI_TalonFX(9); //set to the right values
+  WPI_TalonFX philDiag = new WPI_TalonFX(10);
+  //intake and belt motors
+  WPI_VictorSPX alexIntake = new WPI_VictorSPX(1);
+  WPI_VictorSPX monkeyBelt1 = new WPI_VictorSPX(2); //set to the right values
+  WPI_VictorSPX monkeyBelt2 = new WPI_VictorSPX(3);
+  //motor control groups for belt
+  MotorControllerGroup belt = new MotorControllerGroup(monkeyBelt1, monkeyBelt2);
+  //motor control groups (for driving)
   MotorControllerGroup left = new MotorControllerGroup(leftFront, leftBack);
   MotorControllerGroup right = new MotorControllerGroup(rightFront, rightBack);
  
@@ -56,8 +67,8 @@ public class Robot extends TimedRobot {
   DifferentialDrive moveItMoveIt = new DifferentialDrive(left, right);
   
   //Marty=X Melman=y 
-    //These all need more identifiable names
-  double setpointX = 0;
+    //a lot of these need more identifiable names
+  double setpointX = 0; //where we want our limelight x to be
   double setpointY = 4;
   double martySpeed = 0;
   double martyAlign;
@@ -71,6 +82,8 @@ public class Robot extends TimedRobot {
   boolean alignedFirst;
   boolean alignedFinal;
   boolean distanced;
+
+  Timer skipper = new Timer();
 
   //joystick - I petition we name this something more identifiable just in case something breaks
   Joystick mort = new Joystick(1);
@@ -129,6 +142,8 @@ public class Robot extends TimedRobot {
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
+    skipper.reset();
+    skipper.start();
   }
 
   /** This function is called periodically during autonomous. */
@@ -141,6 +156,12 @@ public class Robot extends TimedRobot {
       case kDefaultAuto:
       default:
         // Put default auto code here
+        if (skipper.get() < 10) {
+          kowalski();
+        } else {
+          right.set(.3);
+          left.set(-.3);
+        }
         break;
     }
   }
@@ -155,12 +176,28 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     double x = mort.getRawAxis(4); //figure out the right axis
     double y = mort.getRawAxis(1); //figure out the right axis
-
+    double masonPower = mort.getRawAxis(3);
+    double philPower = mort.getRawAxis(2);
+    //drive controls
     moveItMoveIt.arcadeDrive(x, -y);
-
+    //autoshoot
     if (mort.getRawButton(1)) {
       kowalski();
     }
+    //shooter controls
+    if (mort.getRawButton(4)) {
+      shooter.set(.5); //set to the right values
+    }
+    //belt controls
+    if (mort.getRawButton(2)) {
+      belt.set(.5);
+    } else if (mort.getRawButton(3)) {
+      belt.set(-.5);
+    } //set to the right values
+
+    masonUp.set(masonPower);
+    philDiag.set(philPower);
+
   }
 
   /** This function is called once when the robot is disabled. */
@@ -228,15 +265,19 @@ public class Robot extends TimedRobot {
     // after moving closer, rotate into a better position
     if (distanced == true) {
       if (lmlx > 1) {
-        right.set(melmanAlign);
-        left.set(melmanAlign);
+        right.set(.05);
+        left.set(.05);
         alignedFinal = false;
       } else if (lmlx < -1) {
-        right.set(-melmanAlign);
-        left.set(-melmanAlign);
+        right.set(-.05);
+        left.set(-.05);
         alignedFinal = false;
       } else if (lmlx < 1 && lmlx > -1 && tv == 1) {
         alignedFinal = true;
+      }
+      if (alignedFinal == true && alignedFirst == true && distanced == true) {
+        shooter.set(.5);
+        belt.set(.5);
       }
     }
 
@@ -246,7 +287,7 @@ public class Robot extends TimedRobot {
   public double martyX() {
     martySpeed = .03;
     martyError = setpointX - lmlx;
-    if (Math.abs(martySpeed*martyError) < .15 ) {
+    if (Math.abs(martySpeed*martyError) < .15) {
       martyAlign = .15;
     } else {
       martyAlign = martySpeed*martyError;
@@ -256,7 +297,7 @@ public class Robot extends TimedRobot {
 
   /**********************************************************/
   public double melmanY() {
-    melmanSpeed = .03;
+    melmanSpeed = .05;
     melmanError = setpointY - lmly;
     if (Math.abs(melmanSpeed*melmanError) < .15) {
       melmanAlign = .15;
