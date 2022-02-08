@@ -44,7 +44,7 @@ public class Robot extends TimedRobot {
 
   //motors
     //STILL NEED SHOOTER MOTORS and control group if necessary.
-  WPI_TalonFX leftFront = new WPI_TalonFX(3);
+  WPI_TalonFX leftFront = new WPI_TalonFX(0);
   WPI_TalonFX leftBack = new WPI_TalonFX(1);
   WPI_TalonFX rightFront = new WPI_TalonFX(6);
   WPI_TalonFX rightBack = new WPI_TalonFX(5);
@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
   boolean distanced;
 
   //joystick - I petition we name this something more identifiable just in case something breaks
-  Joystick mort = new Joystick(1);
+  Joystick mort = new Joystick(0);
 
 
   /**
@@ -159,7 +159,7 @@ public class Robot extends TimedRobot {
     moveItMoveIt.arcadeDrive(x, -y);
 
     if (mort.getRawButton(1)) {
-      kowalski();
+      leftFront.set(.3);
     }
   }
 
