@@ -9,13 +9,14 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj.Encoder;
 //our imports
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive; //change to whatever our drive is
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
@@ -51,12 +52,12 @@ public class Robot extends TimedRobot {
     //shooter motor
   WPI_TalonFX shooter = new WPI_TalonFX(8);
     //climber motors
-  WPI_TalonFX masonUp = new WPI_TalonFX(9); //set to the right values
+  WPI_TalonFX masonVert = new WPI_TalonFX(9); //set to the right values
   WPI_TalonFX philDiag = new WPI_TalonFX(10);
   //intake and belt motors
-  WPI_VictorSPX alexIntake = new WPI_VictorSPX(1);
-  WPI_VictorSPX monkeyBelt1 = new WPI_VictorSPX(2); //set to the right values
-  WPI_VictorSPX monkeyBelt2 = new WPI_VictorSPX(3);
+  WPI_TalonFX alexIntake = new WPI_TalonFX(1);
+  WPI_TalonFX monkeyBelt1 = new WPI_TalonFX(2); //set to the right values
+  WPI_TalonFX monkeyBelt2 = new WPI_TalonFX(3);
   //motor control groups for belt
   MotorControllerGroup belt = new MotorControllerGroup(monkeyBelt1, monkeyBelt2);
   //motor control groups (for driving)
@@ -84,6 +85,8 @@ public class Robot extends TimedRobot {
   boolean distanced;
 
   Timer skipper = new Timer();
+
+  
 
   //joystick - I petition we name this something more identifiable just in case something breaks
   Joystick mort = new Joystick(1);
@@ -125,6 +128,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("alignedFirst", alignedFirst);
     SmartDashboard.putBoolean("alignedFinal", alignedFinal);
     SmartDashboard.putBoolean("distanced", distanced);
+
+    System.out.println(leftBack.getSelectedSensorVelocity());
   }
 
   /**
@@ -195,7 +200,7 @@ public class Robot extends TimedRobot {
       belt.set(-.5);
     } //set to the right values
 
-    masonUp.set(masonPower);
+    masonVert.set(masonPower);
     philDiag.set(philPower);
 
   }
