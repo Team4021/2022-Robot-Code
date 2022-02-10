@@ -58,9 +58,9 @@ public class Robot extends TimedRobot {
   WPI_TalonFX alexIntake = new WPI_TalonFX(1);
   WPI_TalonFX monkeyBelt1 = new WPI_TalonFX(2); //set to the right values
   WPI_TalonFX monkeyBelt2 = new WPI_TalonFX(3);
-  //motor control groups for belt
+  //motor control group (belt)
   MotorControllerGroup belt = new MotorControllerGroup(monkeyBelt1, monkeyBelt2);
-  //motor control groups (for driving)
+  //motor control group (driving)
   MotorControllerGroup left = new MotorControllerGroup(leftFront, leftBack);
   MotorControllerGroup right = new MotorControllerGroup(rightFront, rightBack);
  
@@ -70,26 +70,38 @@ public class Robot extends TimedRobot {
   //Marty=X Melman=y 
     //a lot of these need more identifiable names
   double setpointX = 0; //where we want our limelight x to be
-  double setpointY = 4;
+  double setpointY = 4; //where we want our limelight y to be
   double martySpeed = 0;
   double martyAlign;
-  double martyError = 0;
-  double lmlx;
-  double lmly;
+  double martyError = 0; //how far our limelight is from its target (X)
+  double lmlx; //where limelight x actually is
+  double lmly; //where limelight y actually is
   double melmanSpeed = 0;
   double melmanAlign;
-  double melmanError;
+  double melmanError; //how far limelight is from its target (Y)
 
+  //allign X once, allign Y, then reallign X
   boolean alignedFirst;
   boolean alignedFinal;
   boolean distanced;
-
+  //autonomous timer to make sure we move for extra points
   Timer skipper = new Timer();
 
   
-
   //joystick - I petition we name this something more identifiable just in case something breaks
   Joystick mort = new Joystick(1);
+    //Buttons
+      //A=1
+      //B=2
+      //X=3
+      //Y=4
+      //Left Button=5
+      //Right Button=6
+      //Back (select)=7
+      //Start=8
+      //left Joystick Button=9
+      //Right Joystick Button=10
+
 
 
   /**
@@ -189,15 +201,14 @@ public class Robot extends TimedRobot {
     if (mort.getRawButton(1)) {
       kowalski();
     }
-    //shooter controls
-    if (mort.getRawButton(4)) {
-      shooter.set(.5); //set to the right values
-    }
-    //belt controls
+
+    //belt & shooter controls
     if (mort.getRawButton(2)) {
       belt.set(.5);
+      shooter.set(.5);
     } else if (mort.getRawButton(3)) {
       belt.set(-.5);
+      shooter.set(-.5);
     } //set to the right values
 
     masonVert.set(masonPower);
