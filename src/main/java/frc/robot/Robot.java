@@ -157,7 +157,7 @@ public class Robot extends TimedRobot {
     double y = mort.getRawAxis(1); //figure out the right axis
 
     moveItMoveIt.arcadeDrive(x, -y);
-
+    leftFront.set(y);
     if (mort.getRawButton(1)) {
       leftFront.set(.3);
     }
