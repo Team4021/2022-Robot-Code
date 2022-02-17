@@ -9,18 +9,15 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Encoder;
+
 //our imports
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive; //change to whatever our drive is
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -45,22 +42,18 @@ public class Robot extends TimedRobot {
 
   //motors
     //drive motors
-  WPI_TalonFX leftFront = new WPI_TalonFX(3);
-  WPI_TalonFX leftBack = new WPI_TalonFX(1);
-  WPI_TalonFX rightFront = new WPI_TalonFX(6); //set to the right values
-  WPI_TalonFX rightBack = new WPI_TalonFX(5);
+  WPI_TalonFX leftFront = new WPI_TalonFX(4);
+  WPI_TalonFX leftBack = new WPI_TalonFX(5);
+  WPI_TalonFX rightFront = new WPI_TalonFX(3); //set to the right values
+  WPI_TalonFX rightBack = new WPI_TalonFX(6);
     //shooter motor
-  WPI_TalonFX shooter = new WPI_TalonFX(8);
+  WPI_TalonFX shooter = new WPI_TalonFX(0);
     //climber motors
-  WPI_TalonFX masonVert = new WPI_TalonFX(9); //set to the right values
+  WPI_TalonFX masonVert = new WPI_TalonFX(1); //set to the right values
   WPI_TalonFX philDiag = new WPI_TalonFX(10);
   //intake and belt motors
-  WPI_TalonFX alexIntake = new WPI_TalonFX(1);
-  WPI_TalonFX monkeyBelt1 = new WPI_TalonFX(2); //set to the right values
-  WPI_TalonFX monkeyBelt2 = new WPI_TalonFX(3);
+  WPI_TalonFX alexIntake = new WPI_TalonFX(2);
   //motor control group (belt)
-  MotorControllerGroup belt = new MotorControllerGroup(monkeyBelt1, monkeyBelt2);
-  //motor control group (driving)
   MotorControllerGroup left = new MotorControllerGroup(leftFront, leftBack);
   MotorControllerGroup right = new MotorControllerGroup(rightFront, rightBack);
  
@@ -69,10 +62,11 @@ public class Robot extends TimedRobot {
   
   //Marty=X Melman=y 
     //a lot of these need more identifiable names
-  double setpointX = 0; //where we want our limelight x to be
-  double setpointY = 4; //where we want our limelight y to be
+  double setpointX = 8; //where we want our limelight x to be
+  double setpointY = 8.5; //where we want our limelight y to be
   double martySpeed = 0;
   double martyAlign;
+  //nice
   double martyError = 0; //how far our limelight is from its target (X)
   double lmlx; //where limelight x actually is
   double lmly; //where limelight y actually is
@@ -101,8 +95,6 @@ public class Robot extends TimedRobot {
       //Start=8
       //left Joystick Button=9
       //Right Joystick Button=10
-
-
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -140,8 +132,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("alignedFirst", alignedFirst);
     SmartDashboard.putBoolean("alignedFinal", alignedFinal);
     SmartDashboard.putBoolean("distanced", distanced);
-
-    System.out.println(leftBack.getSelectedSensorVelocity());
   }
 
   /**
@@ -204,15 +194,30 @@ public class Robot extends TimedRobot {
 
     //belt & shooter controls
     if (mort.getRawButton(2)) {
-      belt.set(.5);
-      shooter.set(.5);
+      alexIntake.set(.1);
+      shooter.set(.4);
     } else if (mort.getRawButton(3)) {
-      belt.set(-.5);
-      shooter.set(-.5);
-    } //set to the right values
+      alexIntake.set(-.1);
+      shooter.set(-.1);
+    } else {
+      alexIntake.set(0);
+      shooter.set(0);
+    }
 
-    masonVert.set(masonPower);
-    philDiag.set(philPower);
+
+    if (mort.getRawButton(4)) {
+      alexIntake.set(.1);
+    }
+
+      masonVert.set(masonPower);
+      philDiag.set(philPower);
+    
+
+    if (mort.getRawButton(5)) {
+      philDiag.set(-.25);
+    } else if (mort.getRawButton(6)) {
+      masonVert.set(-.25);
+    }
 
   }
 
@@ -249,30 +254,30 @@ public class Robot extends TimedRobot {
       right.set(.3);
       left.set(.3);
       alignedFirst = false;
-    } else if (lmlx > 10) {
+    } else if (lmlx > -4) {
       right.set(martyAlign);
       left.set(martyAlign);
       alignedFirst = false;
-    } else if (lmlx < -10) {
+    } else if (lmlx < -15) {
       right.set(-martyAlign);
       left.set(-martyAlign);
       alignedFirst = false;
-   } else if (lmlx < 10 && lmlx > -10 && tv == 1) {
+   } else if (lmlx < -4 && lmlx > -15 && tv == 1) {
      alignedFirst = true;
     }
 
 
     // after rotated into place, move closer
     if (alignedFirst == true && tv == 1) {
-      if (lmly > 5) {
-        right.set(melmanAlign);
-        left.set(-melmanAlign);
-        distanced = false;
-      } else if (lmly < 3) {
+      if (lmly > -8) {
         right.set(-melmanAlign);
         left.set(melmanAlign);
         distanced = false;
-      } else if (lmly < 5 && lmly > 3 && tv == 1) {
+      } else if (lmly < -9) {
+        right.set(melmanAlign);
+        left.set(-melmanAlign);
+        distanced = false;
+      } else if (lmly < -8 && lmly > -9 && tv == 1) {
         distanced = true;
       }
     }
@@ -280,40 +285,41 @@ public class Robot extends TimedRobot {
 
     // after moving closer, rotate into a better position
     if (distanced == true) {
-      if (lmlx > 1) {
-        right.set(.05);
-        left.set(.05);
+      if (lmlx > -8.5) {
+        right.set(-.1);
+        left.set(-.1);
         alignedFinal = false;
-      } else if (lmlx < -1) {
-        right.set(-.05);
-        left.set(-.05);
+      } else if (lmlx < -9.5) {
+        right.set(.1);
+        left.set(.1);
         alignedFinal = false;
-      } else if (lmlx < 1 && lmlx > -1 && tv == 1) {
+      } else if (lmlx < -8.5 && lmlx > -9.5 && tv == 1) {
         alignedFinal = true;
       }
       if (alignedFinal == true && alignedFirst == true && distanced == true) {
-        shooter.set(.5);
-        belt.set(.5);
+        shooter.set(.4);
+        alexIntake.set(.1);
       }
+      
     }
 
   }
 
   /**********************************************************/
   public double martyX() {
-    martySpeed = .03;
+    martySpeed = .01;
     martyError = setpointX - lmlx;
     if (Math.abs(martySpeed*martyError) < .15) {
       martyAlign = .15;
     } else {
       martyAlign = martySpeed*martyError;
-    }
+    } 
     return martyAlign;
   }
 
   /**********************************************************/
   public double melmanY() {
-    melmanSpeed = .05;
+    melmanSpeed = .02;
     melmanError = setpointY - lmly;
     if (Math.abs(melmanSpeed*melmanError) < .15) {
       melmanAlign = .15;
