@@ -199,7 +199,7 @@ public class Robot extends TimedRobot {
 
     //belt & shooter controls
     if (mort.getRawButton(2))/*B*/ {
-      shooter.set(.5);
+      shooter.set(.4);
     } else if (mort.getRawButton(3))/*X*/ {
       alexIntake.set(-.1);
       shooter.set(-.1);
@@ -210,7 +210,7 @@ public class Robot extends TimedRobot {
 
 
     if (mort.getRawButton(4))/*Y*/ {
-      alexIntake.set(.15);
+      alexIntake.set(.3);
     }
 
       masonVert.set(masonPower);
