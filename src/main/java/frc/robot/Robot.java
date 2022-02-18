@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -64,9 +66,9 @@ public class Robot extends TimedRobot {
     //a lot of these need more identifiable names
   double setpointX = 8; //where we want our limelight x to be
   double setpointY = 8.5; //where we want our limelight y to be
+  //nice
   double martySpeed = 0;
   double martyAlign;
-  //nice
   double martyError = 0; //how far our limelight is from its target (X)
   double lmlx; //where limelight x actually is
   double lmly; //where limelight y actually is
@@ -81,16 +83,18 @@ public class Robot extends TimedRobot {
   //autonomous timer to make sure we move for extra points
   Timer skipper = new Timer();
 
-  
+  //camera
+  UsbCamera cam0;
+
   //joystick - I petition we name this something more identifiable just in case something breaks
   Joystick mort = new Joystick(1);
     //Buttons
-      //A=1
-      //B=2
-      //X=3
-      //Y=4
-      //Left Button=5
-      //Right Button=6
+      //A=1   Limelight
+      //B=2   Shooter
+      //X=3   Reverse Shooter/Intake
+      //Y=4   Intake
+      //Left Bumper=5   Diagonal Climb Up
+      //Right Bumper=6    Vertical Climb Up
       //Back (select)=7
       //Start=8
       //left Joystick Button=9
@@ -105,6 +109,7 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+    cam0 = CameraServer.startAutomaticCapture(0);
   }
 
   /**
@@ -163,11 +168,11 @@ public class Robot extends TimedRobot {
       case kDefaultAuto:
       default:
         // Put default auto code here
-        if (skipper.get() < 10) {
+        if (skipper.get() < 13) {
           kowalski();
         } else {
-          right.set(.3);
-          left.set(-.3);
+          right.set(-.3);
+          left.set(.3);
         }
         break;
     }
@@ -188,15 +193,14 @@ public class Robot extends TimedRobot {
     //drive controls
     moveItMoveIt.arcadeDrive(x, -y);
     //autoshoot
-    if (mort.getRawButton(1)) {
+    if (mort.getRawButton(1))/*A*/ {
       kowalski();
     }
 
     //belt & shooter controls
-    if (mort.getRawButton(2)) {
-      alexIntake.set(.1);
-      shooter.set(.4);
-    } else if (mort.getRawButton(3)) {
+    if (mort.getRawButton(2))/*B*/ {
+      shooter.set(.5);
+    } else if (mort.getRawButton(3))/*X*/ {
       alexIntake.set(-.1);
       shooter.set(-.1);
     } else {
@@ -205,17 +209,17 @@ public class Robot extends TimedRobot {
     }
 
 
-    if (mort.getRawButton(4)) {
-      alexIntake.set(.1);
+    if (mort.getRawButton(4))/*Y*/ {
+      alexIntake.set(.15);
     }
 
       masonVert.set(masonPower);
       philDiag.set(philPower);
     
 
-    if (mort.getRawButton(5)) {
+    if (mort.getRawButton(5))/*LB*/ {
       philDiag.set(-.25);
-    } else if (mort.getRawButton(6)) {
+    } else if (mort.getRawButton(6))/*RB*/ {
       masonVert.set(-.25);
     }
 
@@ -297,10 +301,10 @@ public class Robot extends TimedRobot {
         alignedFinal = true;
       }
       if (alignedFinal == true && alignedFirst == true && distanced == true) {
-        shooter.set(.4);
+        shooter.set(.5);
         alexIntake.set(.1);
       }
-      
+
     }
 
   }
