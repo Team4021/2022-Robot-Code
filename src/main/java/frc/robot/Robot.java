@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 //our imports
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive; //change to whatever our drive is
+import edu.wpi.first.wpilibj.drive.DifferentialDrive; 
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -186,8 +186,8 @@ public class Robot extends TimedRobot {
     //joystick imput = motion using arcade drive
   @Override
   public void teleopPeriodic() {
-    double x = mort.getRawAxis(4); //figure out the right axis
-    double y = mort.getRawAxis(1); //figure out the right axis
+    double x = mort.getRawAxis(4); 
+    double y = mort.getRawAxis(1); 
     double masonPower = mort.getRawAxis(3);
     double philPower = mort.getRawAxis(2);
     //drive controls
