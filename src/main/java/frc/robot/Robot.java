@@ -64,8 +64,8 @@ public class Robot extends TimedRobot {
   
   //Marty=X Melman=y 
     //a lot of these need more identifiable names
-  double setpointX = 8; //where we want our limelight x to be
-  double setpointY = 8.5; //where we want our limelight y to be
+  double setpointX = -2.13; //where we want our limelight x to be
+  double setpointY = 1.9; //where we want our limelight y to be
   //nice
   double martySpeed = 0;
   double martyAlign;
@@ -82,6 +82,7 @@ public class Robot extends TimedRobot {
   boolean distanced;
   //autonomous timer to make sure we move for extra points
   Timer skipper = new Timer();
+  boolean autoOne = true;
 
   //camera
   UsbCamera cam0;
@@ -168,11 +169,15 @@ public class Robot extends TimedRobot {
       case kDefaultAuto:
       default:
         // Put default auto code here
-        if (skipper.get() < 13) {
-          kowalski();
+        if (skipper.get() < 2.5) {
+          right.set(-.2);
+          left.set(.2);
+          shooter.set(.5);
         } else {
-          right.set(-.3);
-          left.set(.3);
+          right.set(0);
+          left.set(0);
+          shooter.set(.5);
+          alexIntake.set(.3);
         }
         break;
     }
@@ -186,8 +191,8 @@ public class Robot extends TimedRobot {
     //joystick imput = motion using arcade drive
   @Override
   public void teleopPeriodic() {
-    double x = mort.getRawAxis(4); 
-    double y = mort.getRawAxis(1); 
+    double x = mort.getRawAxis(4)/1.5; 
+    double y = mort.getRawAxis(1)/1.5; 
     double masonPower = mort.getRawAxis(3);
     double philPower = mort.getRawAxis(2);
     //drive controls
@@ -199,10 +204,12 @@ public class Robot extends TimedRobot {
 
     //belt & shooter controls
     if (mort.getRawButton(2))/*B*/ {
-      shooter.set(.4);
+      shooter.set(.55);
     } else if (mort.getRawButton(3))/*X*/ {
       alexIntake.set(-.1);
       shooter.set(-.1);
+    } else if (mort.getRawButton(1)) {
+      kowalski();
     } else {
       alexIntake.set(0);
       shooter.set(0);
@@ -258,7 +265,7 @@ public class Robot extends TimedRobot {
       right.set(.3);
       left.set(.3);
       alignedFirst = false;
-    } else if (lmlx > -4) {
+    } else if (lmlx > 0) {
       right.set(martyAlign);
       left.set(martyAlign);
       alignedFirst = false;
@@ -266,22 +273,22 @@ public class Robot extends TimedRobot {
       right.set(-martyAlign);
       left.set(-martyAlign);
       alignedFirst = false;
-   } else if (lmlx < -4 && lmlx > -15 && tv == 1) {
+   } else if (lmlx < 0 && lmlx > -15 && tv == 1) {
      alignedFirst = true;
     }
 
 
     // after rotated into place, move closer
     if (alignedFirst == true && tv == 1) {
-      if (lmly > -8) {
+      if (lmly > 2.4) {
         right.set(-melmanAlign);
         left.set(melmanAlign);
         distanced = false;
-      } else if (lmly < -9) {
+      } else if (lmly < 1.4) {
         right.set(melmanAlign);
         left.set(-melmanAlign);
         distanced = false;
-      } else if (lmly < -8 && lmly > -9 && tv == 1) {
+      } else if (lmly < 2.4 && lmly > 1.4 && tv == 1) {
         distanced = true;
       }
     }
@@ -289,20 +296,20 @@ public class Robot extends TimedRobot {
 
     // after moving closer, rotate into a better position
     if (distanced == true) {
-      if (lmlx > -8.5) {
-        right.set(-.1);
-        left.set(-.1);
-        alignedFinal = false;
-      } else if (lmlx < -9.5) {
+      if (lmlx > -1.13) {
         right.set(.1);
         left.set(.1);
         alignedFinal = false;
-      } else if (lmlx < -8.5 && lmlx > -9.5 && tv == 1) {
+      } else if (lmlx < -3.13) {
+        right.set(-.1);
+        left.set(-.1);
+        alignedFinal = false;
+      } else if (lmlx < -1.13 && lmlx > -3.13 && tv == 1) {
         alignedFinal = true;
       }
-      if (alignedFinal == true && alignedFirst == true && distanced == true) {
-        shooter.set(.5);
-        alexIntake.set(.1);
+      if (alignedFinal == true) {
+        shooter.set(.55);
+        alexIntake.set(.3);
       }
 
     }
