@@ -82,11 +82,13 @@ public class Robot extends TimedRobot {
   boolean distanced;
   //autonomous timer to make sure we move for extra points
   Timer skipper = new Timer();
+  Timer delayShot = new Timer();
   boolean autoOne = true;
+  boolean intakeToggle;
 
   //camera
   UsbCamera cam0;
-
+  double inpTest;
   //joystick - I petition we name this something more identifiable just in case something breaks
   Joystick mort = new Joystick(1);
     //Buttons
@@ -96,8 +98,8 @@ public class Robot extends TimedRobot {
       //Y=4   Intake
       //Left Bumper=5   Diagonal Climb Up
       //Right Bumper=6    Vertical Climb Up
-      //Back (select)=7
-      //Start=8
+      //Back (select)=7   Nothing
+      //Start=8   Nothing
       //left Joystick Button=9
       //Right Joystick Button=10
 
@@ -138,6 +140,12 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("alignedFirst", alignedFirst);
     SmartDashboard.putBoolean("alignedFinal", alignedFinal);
     SmartDashboard.putBoolean("distanced", distanced);
+    SmartDashboard.getNumber("Input Number", inpTest);
+    if (inpTest == 420){
+      SmartDashboard.putBoolean("Input Test", true);
+    } else {
+      SmartDashboard.putBoolean("Input Test", false);
+    }
   }
 
   /**
@@ -206,20 +214,24 @@ public class Robot extends TimedRobot {
     if (mort.getRawButton(2))/*B*/ {
       shooter.set(.55);
     } else if (mort.getRawButton(3))/*X*/ {
-      alexIntake.set(-.1);
-      shooter.set(-.1);
-    } else if (mort.getRawButton(1)) {
+      alexIntake.set(-.3);
+      shooter.set(-.3);
+    } else if (mort.getRawButton(1))/*A*/ {
       kowalski();
     } else {
       alexIntake.set(0);
       shooter.set(0);
     }
 
-
-    if (mort.getRawButton(4))/*Y*/ {
-      alexIntake.set(.3);
+    if (mort.getRawButtonPressed(4))  {
+      intakeToggle = !intakeToggle; }
+    if (intakeToggle == true) {
+      alexIntake.set(.4);
+      
     }
-
+    else {
+      alexIntake.set(0);
+    }
       masonVert.set(masonPower);
       philDiag.set(philPower);
     
@@ -308,8 +320,8 @@ public class Robot extends TimedRobot {
         alignedFinal = true;
       }
       if (alignedFinal == true) {
-        shooter.set(.55);
-        alexIntake.set(.3);
+        shooter.set(.65);
+        alexIntake.set(.25);
       }
 
     }
