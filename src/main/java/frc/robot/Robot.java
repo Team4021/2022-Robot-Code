@@ -223,15 +223,14 @@ public class Robot extends TimedRobot {
       shooter.set(0);
     }
 
-    if (mort.getRawButtonPressed(4))  {
+    if (mort.getRawButtonPressed(4))/*Y*/  {
       intakeToggle = !intakeToggle; }
     if (intakeToggle == true) {
       alexIntake.set(.4);
-      
     }
-    else {
-      alexIntake.set(0);
-    }
+    //else {
+    //  alexIntake.set(0);
+    //}
       masonVert.set(masonPower);
       philDiag.set(philPower);
     
