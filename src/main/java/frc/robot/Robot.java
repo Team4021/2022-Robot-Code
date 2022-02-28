@@ -84,7 +84,6 @@ public class Robot extends TimedRobot {
   Timer skipper = new Timer();
   Timer delayShot = new Timer();
   boolean autoOne = true;
-  boolean intakeToggle;
 
   //camera
   UsbCamera cam0;
@@ -94,7 +93,7 @@ public class Robot extends TimedRobot {
     //Buttons
       //A=1   Limelight
       //B=2   Shooter
-      //X=3   Reverse Shooter/Intake
+      //X=3   Reverse Shooter/Reverse Intake
       //Y=4   Intake
       //Left Bumper=5   Diagonal Climb Up
       //Right Bumper=6    Vertical Climb Up
@@ -218,27 +217,23 @@ public class Robot extends TimedRobot {
       shooter.set(-.3);
     } else if (mort.getRawButton(1))/*A*/ {
       kowalski();
-    } else {
+    } else{
       alexIntake.set(0);
       shooter.set(0);
     }
 
-    if (mort.getRawButtonPressed(4))/*Y*/  {
-      intakeToggle = !intakeToggle; }
-    if (intakeToggle == true) {
+    if (mort.getRawButton(4))/*Y*/  {
       alexIntake.set(.4);
-    }
-    //else {
-    //  alexIntake.set(0);
-    //}
-      masonVert.set(masonPower);
+    } 
+
+      masonVert.set(-masonPower);
       philDiag.set(philPower);
     
 
     if (mort.getRawButton(5))/*LB*/ {
       philDiag.set(-.25);
     } else if (mort.getRawButton(6))/*RB*/ {
-      masonVert.set(-.25);
+      masonVert.set(.25);
     }
 
   }
