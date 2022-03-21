@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -23,6 +24,8 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -52,13 +55,15 @@ public class Robot extends TimedRobot {
   WPI_TalonFX shooter = new WPI_TalonFX(0);
     //climber motors
   WPI_TalonFX masonVert = new WPI_TalonFX(1); //set to the right values
-  WPI_TalonFX philDiag = new WPI_TalonFX(10);
+  WPI_VictorSPX philDiag1 = new WPI_VictorSPX(7);
+  WPI_VictorSPX philDiag2 = new WPI_VictorSPX(8);
   //intake and belt motors
   WPI_TalonFX alexIntake = new WPI_TalonFX(2);
   //motor control group (belt)
   MotorControllerGroup left = new MotorControllerGroup(leftFront, leftBack);
   MotorControllerGroup right = new MotorControllerGroup(rightFront, rightBack);
  
+  MotorControllerGroup philDiagTrue = new MotorControllerGroup(philDiag1, philDiag2);
   //differential drive. What does this do again?
   DifferentialDrive moveItMoveIt = new DifferentialDrive(left, right);
   
@@ -87,9 +92,13 @@ public class Robot extends TimedRobot {
 
   //camera
   UsbCamera cam0;
+  UsbCamera cam1;
   double inpTest;
   //joystick - I petition we name this something more identifiable just in case something breaks
   Joystick mort = new Joystick(1);
+
+  //limit switch
+  DigitalInput climberStop = new DigitalInput(9);
     //Buttons
       //A=1   Limelight
       //B=2   Shooter
@@ -112,6 +121,7 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
     cam0 = CameraServer.startAutomaticCapture(0);
+    cam1 = CameraServer.startAutomaticCapture(1);
   }
 
   /**
@@ -226,16 +236,35 @@ public class Robot extends TimedRobot {
       alexIntake.set(.4);
     } 
 
-      masonVert.set(-masonPower);
-      philDiag.set(philPower);
-    
-
-    if (mort.getRawButton(5))/*LB*/ {
+      //masonVert.set(masonPower);
+      if (philPower > 0 && climberStop.get()) {
+        philDiagTrue.set(0);
+      } else {
+        philDiagTrue.set(philPower);
+      }
+/*climber controls (OLD)
+    if (mort.getRawButton(5))LB {
       philDiag.set(-.25);
-    } else if (mort.getRawButton(6))/*RB*/ {
-      masonVert.set(.25);
-    }
+    } else if (mort.getRawButton(6))RB {
+      masonVert.set(-.25);
+    } */
 
+
+    // limit swtich climber controls CHECK IF THIS WORKS IM STUPID
+     /*if (masonPower > 0 && climberStop.get()) {
+        masonVert.set(0);
+      } else if (mort.getRawButton(6)){
+        masonVert.set(-.25);
+      } else {
+        masonVert.set(masonPower);
+      }*/
+    
+    if (mort.getRawButton(6)) {
+      masonVert.set(-.25);
+    } else {
+      masonVert.set(masonPower);
+    }
+       
   }
 
   /** This function is called once when the robot is disabled. */
